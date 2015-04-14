@@ -50,7 +50,7 @@ func (c ClearestOperation) getClearestImageBetweenTwo(current, other *image.RGBA
 	}
 }
 
-func average(color color.Color) uint32 {
-	r, g, b, _ := color.RGBA()
+func average(someColor color.Color) uint32 {
+	r, g, b, _ := someColor.RGBA()
 	return (r + g + b) / 3
 }
