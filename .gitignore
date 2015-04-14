@@ -89,3 +89,4 @@ _testmain.go
 *.exe
 *.test
 *.prof
+blzimg
