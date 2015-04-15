@@ -8,27 +8,27 @@ import (
 	"testing"
 )
 
-func TestIfWeGetTheRightClearestColorBetweenSomeOfThem(t *testing.T) {
-	operation := ClearestOperation{}
+func TestIfWeGetTheRightLightestColorBetweenSomeOfThem(t *testing.T) {
+	operation := LightestOperation{}
 
 	pixel1 := color.RGBA{128, 22, 33, 0}
 	pixel2 := color.RGBA{2, 21, 12, 0}
 	pixel3 := color.RGBA{43, 12, 1, 0}
 	pixel4 := color.RGBA{255, 255, 255, 0}
 
-	assert.Equal(t, pixel4, operation.clearest([]color.RGBA{pixel1, pixel2, pixel3, pixel4}), "The clearest color is (128, 128, 128)")
+	assert.Equal(t, pixel4, operation.lightest([]color.RGBA{pixel1, pixel2, pixel3, pixel4}), "The lightest color is (128, 128, 128)")
 }
 
-func TestClearestWithEmptyArray(t *testing.T) {
-	operation := ClearestOperation{}
+func TestLightestWithEmptyArray(t *testing.T) {
+	operation := LightestOperation{}
 
 	black := color.RGBA{0, 0, 0, 0}
 
-	assert.Equal(t, black, operation.clearest([]color.RGBA{}), "Return black for an empty array")
+	assert.Equal(t, black, operation.lightest([]color.RGBA{}), "Return black for an empty array")
 }
 
-func TestIfWeGetAImageMadeWithTheClearestPixelsIfWeMergeSomeImages(t *testing.T) {
-	operation := ClearestOperation{}
+func TestIfWeGetAImageMadeWithTheLightestPixelsIfWeMergeSomeImages(t *testing.T) {
+	operation := LightestOperation{}
 
 	black := color.RGBA{0, 0, 0, 0}
 	white := color.RGBA{255, 255, 255, 0}

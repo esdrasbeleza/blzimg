@@ -20,7 +20,7 @@ func main() {
 			Usage:   "Merge the lightest pixels of some images in a single one",
 			Action: func(c *cli.Context) {
 				fmt.Printf("Processing images...")
-				operation := ClearestOperation{}
+				operation := LightestOperation{}
 				finalImage, _ := operation.ResultFiles(c.Args())
 				finalFile, _ := os.Create("final.jpg")
 				defer finalFile.Close()
