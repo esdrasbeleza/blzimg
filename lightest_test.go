@@ -66,7 +66,11 @@ func TestIfWeGetAImageMadeWithTheLightestPixelsIfWeMergeSomeImages(t *testing.T)
 	image3.Set(2, 1, white)
 	image3.Set(2, 2, white)
 
-	mergedImage, _ := operation.Result([]image.Image{image1, image2, image3})
+	imageContainer1 := ImageItselfContainer{image1}
+	imageContainer2 := ImageItselfContainer{image2}
+	imageContainer3 := ImageItselfContainer{image3}
+
+	mergedImage, _ := operation.Result([]ImageContainer{imageContainer1, imageContainer2, imageContainer3})
 	bounds := mergedImage.Bounds().Canon()
 	for i := bounds.Min.X; i < bounds.Max.X; i++ {
 		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {

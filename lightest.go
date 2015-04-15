@@ -4,8 +4,6 @@ import "image"
 import "image/draw"
 import "image/color"
 import "errors"
-import "os"
-import "fmt"
 
 type LightestOperation struct{}
 
@@ -21,40 +19,14 @@ func (c LightestOperation) lightest(colors []color.RGBA) color.Color {
 	return lightest
 }
 
-func (c LightestOperation) ResultFiles(files []string) (image.Image, error) {
-	firstFile, _ := os.Open(files[0])
-	defer firstFile.Close()
-	firstImage, _, _ := image.Decode(firstFile)
+func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) {
+	firstImage := images[0].getImage()
 	bounds := firstImage.Bounds()
 	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
 	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
-	for _, currentImageFile := range files {
-		fmt.Printf("Processing %s...\n", currentImageFile)
-
-		currentFile, _ := os.Open(currentImageFile)
-		defer currentFile.Close()
-		currentImage, _, _ := image.Decode(currentFile)
-
-		if currentImage.Bounds() != bounds {
-			return nil, errors.New("The images have different size!")
-		}
-
-		imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-		draw.Draw(imageToCompare, bounds, currentImage, bounds.Min, draw.Src)
-		c.getlightestImageBetweenTwo(lightest, imageToCompare)
-	}
-
-	return lightest, nil
-}
-
-func (c LightestOperation) Result(images []image.Image) (image.Image, error) {
-	firstImage := images[0]
-	bounds := firstImage.Bounds()
-	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
-
-	for _, currentImage := range images {
+	for _, currentImageContainer := range images {
+		currentImage := currentImageContainer.getImage()
 		if currentImage.Bounds() != bounds {
 			return nil, errors.New("The images have different size!")
 		}

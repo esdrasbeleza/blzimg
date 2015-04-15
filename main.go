@@ -20,8 +20,15 @@ func main() {
 			Usage:   "Merge the lightest pixels of some images in a single one",
 			Action: func(c *cli.Context) {
 				fmt.Printf("Processing images...")
+
+				filenames := c.Args()
+				fileContainers := make([]ImageContainer, len(filenames))
+				for index, filename := range filenames {
+					fileContainers[index] = FileImageContainer{filename}
+				}
+
 				operation := LightestOperation{}
-				finalImage, _ := operation.ResultFiles(c.Args())
+				finalImage, _ := operation.Result(fileContainers)
 				finalFile, _ := os.Create("final.jpg")
 				defer finalFile.Close()
 				jpeg.Encode(finalFile, finalImage, &jpeg.Options{jpeg.DefaultQuality})
