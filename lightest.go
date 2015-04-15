@@ -10,15 +10,15 @@ import "fmt"
 type LightestOperation struct{}
 
 func (c LightestOperation) lightest(colors []color.RGBA) color.Color {
-	Lightest := color.RGBA{0, 0, 0, 0}
+	lightest := color.RGBA{0, 0, 0, 0}
 
 	for _, color := range colors {
-		if average(color) > average(Lightest) {
-			Lightest = color
+		if luminance(color) > luminance(lightest) {
+			lightest = color
 		}
 	}
 
-	return Lightest
+	return lightest
 }
 
 func (c LightestOperation) ResultFiles(files []string) (image.Image, error) {
@@ -26,8 +26,8 @@ func (c LightestOperation) ResultFiles(files []string) (image.Image, error) {
 	defer firstFile.Close()
 	firstImage, _, _ := image.Decode(firstFile)
 	bounds := firstImage.Bounds()
-	Lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-	draw.Draw(Lightest, bounds, firstImage, bounds.Min, draw.Src)
+	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
+	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
 	for _, currentImageFile := range files {
 		fmt.Printf("Processing %s...\n", currentImageFile)
@@ -42,17 +42,17 @@ func (c LightestOperation) ResultFiles(files []string) (image.Image, error) {
 
 		imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
 		draw.Draw(imageToCompare, bounds, currentImage, bounds.Min, draw.Src)
-		c.getLightestImageBetweenTwo(Lightest, imageToCompare)
+		c.getlightestImageBetweenTwo(lightest, imageToCompare)
 	}
 
-	return Lightest, nil
+	return lightest, nil
 }
 
 func (c LightestOperation) Result(images []image.Image) (image.Image, error) {
 	firstImage := images[0]
 	bounds := firstImage.Bounds()
-	Lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-	draw.Draw(Lightest, bounds, firstImage, bounds.Min, draw.Src)
+	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
+	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
 	for _, currentImage := range images {
 		if currentImage.Bounds() != bounds {
@@ -61,10 +61,10 @@ func (c LightestOperation) Result(images []image.Image) (image.Image, error) {
 
 		imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
 		draw.Draw(imageToCompare, bounds, currentImage, bounds.Min, draw.Src)
-		c.getLightestImageBetweenTwo(Lightest, imageToCompare)
+		c.getLightestImageBetweenTwo(lightest, imageToCompare)
 	}
 
-	return Lightest, nil
+	return lightest, nil
 }
 
 func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA) {
@@ -73,10 +73,16 @@ func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA
 			currentLightestImagePixel := current.At(i, j).(color.RGBA)
 			otherImagePixel := other.At(i, j).(color.RGBA)
 
-			LightestColor := c.lightest([]color.RGBA{currentLightestImagePixel, otherImagePixel})
-			current.Set(i, j, LightestColor)
+			lightestColor := c.lightest([]color.RGBA{currentLightestImagePixel, otherImagePixel})
+			current.Set(i, j, lightestColor)
 		}
 	}
+}
+
+// http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+func luminance(someColor color.Color) uint32 {
+	r, g, b, _ := someColor.RGBA()
+	return uint32(0.2126*float32(r) + 0.7152*float32(g) + 0.0722*float32(b))
 }
 
 func average(someColor color.Color) uint32 {
