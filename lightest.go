@@ -1,9 +1,11 @@
 package main
 
-import "image"
-import "image/draw"
-import "image/color"
-import "errors"
+import (
+	"errors"
+	"image"
+	"image/color"
+	"image/draw"
+)
 
 type LightestOperation struct{}
 
@@ -20,6 +22,10 @@ func (c LightestOperation) lightest(colors []color.RGBA) color.Color {
 }
 
 func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) {
+	if len(images) == 0 {
+		return nil, nil
+	}
+
 	firstImage := images[0].getImage()
 	bounds := firstImage.Bounds()
 	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))

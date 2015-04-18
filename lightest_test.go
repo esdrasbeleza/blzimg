@@ -78,3 +78,10 @@ func TestIfWeGetAImageMadeWithTheLightestPixelsIfWeMergeSomeImages(t *testing.T)
 		}
 	}
 }
+
+func ShouldNotWorkWithAnEmptyArray(t *testing.T) {
+	operation := LightestOperation{}
+	image, error := operation.Result([]ImageContainer{})
+	assert.Nil(t, image, "Image must be nil")
+	assert.Nil(t, error, "Error must be nil")
+}
