@@ -25,7 +25,7 @@ func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) 
 	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
 	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
-	for _, currentImageContainer := range images {
+	for _, currentImageContainer := range images[1:] {
 		currentImage := currentImageContainer.getImage()
 		if currentImage.Bounds() != bounds {
 			return nil, errors.New("The images have different size!")
