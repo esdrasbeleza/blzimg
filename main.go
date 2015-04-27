@@ -13,6 +13,8 @@ func main() {
 	app.Usage = "Execute some operations on images"
 	app.Version = "0.1"
 
+	app.Authors = []cli.Author{cli.Author{"Esdras Beleza", "esdras@esdrasbeleza.com"}}
+
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "output",
