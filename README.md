@@ -19,5 +19,5 @@ The command is
 
 ## Limitations
 
-Until now, blzimg is writing its output in JPEG format.
+Until now, blzimg is working only with images in JPEG format.
 
