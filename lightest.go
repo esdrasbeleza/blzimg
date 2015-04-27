@@ -9,16 +9,12 @@ import (
 
 type LightestOperation struct{}
 
-func (c LightestOperation) lightest(colors []color.RGBA) color.Color {
-	lightest := color.RGBA{0, 0, 0, 0}
-
-	for _, color := range colors {
-		if c.luminance(color) > c.luminance(lightest) {
-			lightest = color
-		}
+func (c LightestOperation) lightest(color1, color2 color.RGBA) color.Color {
+	if c.luminance(color1) > c.luminance(color2) {
+		return color1
+	} else {
+		return color2
 	}
-
-	return lightest
 }
 
 func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) {
@@ -32,27 +28,17 @@ func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) 
 	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
 	for _, currentImageContainer := range images[1:] {
-		e := c.compareTwoImages(lightest, &currentImageContainer, &bounds)
-		if e != nil {
-			return nil, e
+		currentImage := currentImageContainer.getImage()
+		if currentImage.Bounds() != bounds {
+			return nil, errors.New("The images have different size!")
 		}
+
+		imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
+		draw.Draw(imageToCompare, bounds, currentImage, bounds.Min, draw.Src)
+		c.getLightestImageBetweenTwo(lightest, imageToCompare)
 	}
 
 	return lightest, nil
-}
-
-func (c LightestOperation) compareTwoImages(lightestImageRGBA *image.RGBA, currentImageContainer *ImageContainer, bounds *image.Rectangle) error {
-	currentImage := (*currentImageContainer).getImage()
-
-	if currentImage.Bounds() != *bounds {
-		errors.New("The images have different size!")
-	}
-
-	imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-	draw.Draw(imageToCompare, *bounds, currentImage, bounds.Min, draw.Src)
-	c.getLightestImageBetweenTwo(lightestImageRGBA, imageToCompare)
-
-	return nil
 }
 
 func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA) {
@@ -61,8 +47,10 @@ func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA
 			currentLightestImagePixel := current.At(i, j).(color.RGBA)
 			otherImagePixel := other.At(i, j).(color.RGBA)
 
-			lightestColor := c.lightest([]color.RGBA{currentLightestImagePixel, otherImagePixel})
-			current.Set(i, j, lightestColor)
+			lightestColor := c.lightest(currentLightestImagePixel, otherImagePixel)
+			if currentLightestImagePixel != lightestColor {
+				current.Set(i, j, lightestColor)
+			}
 		}
 	}
 }
