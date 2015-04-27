@@ -13,7 +13,7 @@ func (c LightestOperation) lightest(colors []color.RGBA) color.Color {
 	lightest := color.RGBA{0, 0, 0, 0}
 
 	for _, color := range colors {
-		if luminance(color) > luminance(lightest) {
+		if c.luminance(color) > c.luminance(lightest) {
 			lightest = color
 		}
 	}
@@ -32,17 +32,27 @@ func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) 
 	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
 	for _, currentImageContainer := range images[1:] {
-		currentImage := currentImageContainer.getImage()
-		if currentImage.Bounds() != bounds {
-			return nil, errors.New("The images have different size!")
+		e := c.compareTwoImages(lightest, &currentImageContainer, &bounds)
+		if e != nil {
+			return nil, e
 		}
-
-		imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-		draw.Draw(imageToCompare, bounds, currentImage, bounds.Min, draw.Src)
-		c.getLightestImageBetweenTwo(lightest, imageToCompare)
 	}
 
 	return lightest, nil
+}
+
+func (c LightestOperation) compareTwoImages(lightestImageRGBA *image.RGBA, currentImageContainer *ImageContainer, bounds *image.Rectangle) error {
+	currentImage := (*currentImageContainer).getImage()
+
+	if currentImage.Bounds() != *bounds {
+		errors.New("The images have different size!")
+	}
+
+	imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
+	draw.Draw(imageToCompare, *bounds, currentImage, bounds.Min, draw.Src)
+	c.getLightestImageBetweenTwo(lightestImageRGBA, imageToCompare)
+
+	return nil
 }
 
 func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA) {
@@ -58,12 +68,12 @@ func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA
 }
 
 // http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
-func luminance(someColor color.Color) uint32 {
+func (c LightestOperation) luminance(someColor color.Color) uint32 {
 	r, g, b, _ := someColor.RGBA()
 	return uint32(0.2126*float32(r) + 0.7152*float32(g) + 0.0722*float32(b))
 }
 
-func average(someColor color.Color) uint32 {
+func (c LightestOperation) average(someColor color.Color) uint32 {
 	r, g, b, _ := someColor.RGBA()
 	return (r + g + b) / 3
 }
