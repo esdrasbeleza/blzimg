@@ -13,9 +13,13 @@ Up to this moment, the only operation in blzimg is the *lightest* operation. Thi
 every pixel from a list of images and, for a position (x,y), the final image will have the lightest
 pixel at that position.
 
-The command is 
+The command is
 
 `blzimg --output final.jpg lightest image1.jpg image2.jpg image3.jpg`
+
+### More information about *lightest*
+
+Please read [this post](http://wp.me/pMrQd-7H).
 
 ## Limitations
 
