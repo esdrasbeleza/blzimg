@@ -9,7 +9,7 @@ import (
 
 type LightestOperation struct{}
 
-func (c LightestOperation) lightest(color1, color2 color.RGBA) color.Color {
+func (c LightestOperation) lightest(color1, color2 color.Color) color.Color {
 	if c.luminance(color1) > c.luminance(color2) {
 		return color1
 	} else {
@@ -20,6 +20,8 @@ func (c LightestOperation) lightest(color1, color2 color.RGBA) color.Color {
 func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) {
 	if len(images) == 0 {
 		return nil, nil
+	} else if len(images) == 1 {
+		return images[0].getImage(), nil
 	}
 
 	firstImage := images[0].getImage()
@@ -44,8 +46,8 @@ func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) 
 func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA) {
 	for i := current.Bounds().Min.X; i < current.Bounds().Max.X; i++ {
 		for j := current.Bounds().Min.Y; j < current.Bounds().Max.Y; j++ {
-			currentLightestImagePixel := current.At(i, j).(color.RGBA)
-			otherImagePixel := other.At(i, j).(color.RGBA)
+			currentLightestImagePixel := current.At(i, j)
+			otherImagePixel := other.At(i, j)
 
 			lightestColor := c.lightest(currentLightestImagePixel, otherImagePixel)
 			if currentLightestImagePixel != lightestColor {
