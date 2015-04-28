@@ -64,8 +64,3 @@ func (c LightestOperation) luminance(someColor color.Color) uint32 {
 	r, g, b, _ := someColor.RGBA()
 	return uint32(0.2126*float32(r) + 0.7152*float32(g) + 0.0722*float32(b))
 }
-
-func (c LightestOperation) average(someColor color.Color) uint32 {
-	r, g, b, _ := someColor.RGBA()
-	return (r + g + b) / 3
-}
