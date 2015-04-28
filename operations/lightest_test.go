@@ -1,11 +1,13 @@
-package main
+package operations
 
 import (
-	"github.com/stretchr/testify/assert"
 	"image"
 	"image/color"
 	"image/draw"
 	"testing"
+
+	"github.com/esdrasbeleza/blzimg/containers"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIfWeGetTheRightLightestColorBetweenSomeOfThem(t *testing.T) {
@@ -56,11 +58,11 @@ func TestIfWeGetAImageMadeWithTheLightestPixelsIfWeMergeSomeImages(t *testing.T)
 	image3.Set(2, 1, white)
 	image3.Set(2, 2, white)
 
-	imageContainer1 := ImageItselfContainer{image1}
-	imageContainer2 := ImageItselfContainer{image2}
-	imageContainer3 := ImageItselfContainer{image3}
+	imageContainer1 := containers.ImageItselfContainer{image1}
+	imageContainer2 := containers.ImageItselfContainer{image2}
+	imageContainer3 := containers.ImageItselfContainer{image3}
 
-	mergedImage, _ := operation.Result([]ImageContainer{imageContainer1, imageContainer2, imageContainer3})
+	mergedImage, _ := operation.Result([]containers.ImageContainer{imageContainer1, imageContainer2, imageContainer3})
 	bounds := mergedImage.Bounds().Canon()
 	for i := bounds.Min.X; i < bounds.Max.X; i++ {
 		for j := bounds.Min.Y; j < bounds.Max.Y; j++ {
@@ -71,7 +73,7 @@ func TestIfWeGetAImageMadeWithTheLightestPixelsIfWeMergeSomeImages(t *testing.T)
 
 func ShouldNotWorkWithAnEmptyArray(t *testing.T) {
 	operation := LightestOperation{}
-	image, error := operation.Result([]ImageContainer{})
+	image, error := operation.Result([]containers.ImageContainer{})
 	assert.Nil(t, image, "Image must be nil")
 	assert.Nil(t, error, "Error must be nil")
 }
@@ -81,8 +83,8 @@ func ShouldWorkWithOneImageOnly(t *testing.T) {
 
 	image1 := image.NewRGBA(image.Rect(0, 0, 3, 3))
 	draw.Draw(image1, image1.Bounds(), &image.Uniform{color.RGBA{0, 0, 0, 0}}, image.ZP, draw.Src)
-	imageContainer1 := ImageItselfContainer{image1}
+	imageContainer1 := containers.ImageItselfContainer{image1}
 
-	image, _ := operation.Result([]ImageContainer{imageContainer1})
+	image, _ := operation.Result([]containers.ImageContainer{imageContainer1})
 	assert.Equal(t, image, image1, "Images must be the same")
 }

@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/codegangsta/cli"
 	"image/jpeg"
 	"os"
+
+	"github.com/codegangsta/cli"
+	"github.com/esdrasbeleza/blzimg/containers"
+	"github.com/esdrasbeleza/blzimg/operations"
 )
 
 func main() {
@@ -33,12 +36,12 @@ func main() {
 				output := c.GlobalString("output")
 
 				fmt.Printf("Processing images...")
-				fileContainers := make([]ImageContainer, len(filenames))
+				fileContainers := make([]containers.ImageContainer, len(filenames))
 				for index, filename := range filenames {
-					fileContainers[index] = FileImageContainer{filename}
+					fileContainers[index] = containers.FileImageContainer{filename}
 				}
 
-				operation := LightestOperation{}
+				operation := operations.LightestOperation{}
 				finalImage, _ := operation.Result(fileContainers)
 				finalFile, _ := os.Create(output)
 				defer finalFile.Close()

@@ -1,10 +1,12 @@
-package main
+package operations
 
 import (
 	"errors"
 	"image"
 	"image/color"
 	"image/draw"
+
+	"github.com/esdrasbeleza/blzimg/containers"
 )
 
 type LightestOperation struct{}
@@ -17,20 +19,20 @@ func (c LightestOperation) lightest(color1, color2 color.Color) color.Color {
 	}
 }
 
-func (c LightestOperation) Result(images []ImageContainer) (image.Image, error) {
+func (c LightestOperation) Result(images []containers.ImageContainer) (image.Image, error) {
 	if len(images) == 0 {
 		return nil, nil
 	} else if len(images) == 1 {
-		return images[0].getImage(), nil
+		return images[0].GetImage(), nil
 	}
 
-	firstImage := images[0].getImage()
+	firstImage := images[0].GetImage()
 	bounds := firstImage.Bounds()
 	lightest := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
 	draw.Draw(lightest, bounds, firstImage, bounds.Min, draw.Src)
 
 	for _, currentImageContainer := range images[1:] {
-		currentImage := currentImageContainer.getImage()
+		currentImage := currentImageContainer.GetImage()
 		if currentImage.Bounds() != bounds {
 			return nil, errors.New("The images have different size!")
 		}
