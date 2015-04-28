@@ -37,15 +37,13 @@ func (c LightestOperation) Result(images []containers.ImageContainer) (image.Ima
 			return nil, errors.New("The images have different size!")
 		}
 
-		imageToCompare := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
-		draw.Draw(imageToCompare, bounds, currentImage, bounds.Min, draw.Src)
-		c.getLightestImageBetweenTwo(lightest, imageToCompare)
+		c.getLightestImageBetweenTwo(lightest, currentImage)
 	}
 
 	return lightest, nil
 }
 
-func (c LightestOperation) getLightestImageBetweenTwo(current, other *image.RGBA) {
+func (c LightestOperation) getLightestImageBetweenTwo(current *image.RGBA, other image.Image) {
 	for i := current.Bounds().Min.X; i < current.Bounds().Max.X; i++ {
 		for j := current.Bounds().Min.Y; j < current.Bounds().Max.Y; j++ {
 			currentLightestImagePixel := current.At(i, j)
