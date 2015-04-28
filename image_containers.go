@@ -1,7 +1,9 @@
 package main
 
-import "image"
-import "os"
+import (
+	"image"
+	"os"
+)
 
 type ImageContainer interface {
 	getImage() image.Image
