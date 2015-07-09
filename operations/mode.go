@@ -47,12 +47,12 @@ func (m ModeOperation) mode(colors []color.Color) color.Color {
 	}
 
 	var (
-		rMean = modeForMap(rMap)
-		gMean = modeForMap(gMap)
-		bMean = modeForMap(bMap)
+		rMode = modeForMap(rMap)
+		gMode = modeForMap(gMap)
+		bMode = modeForMap(bMap)
 	)
 
-	return color.RGBA{rMean, gMean, bMean, 0}
+	return color.RGBA{rMode, gMode, bMode, 0}
 }
 
 func modeForMap(cMap map[uint32]int) uint8 {
