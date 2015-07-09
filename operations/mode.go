@@ -87,7 +87,7 @@ func (c ModeOperation) Result(images []containers.ImageContainer) (image.Image, 
 	mode := image.NewRGBA(image.Rect(0, 0, bounds.Dx(), bounds.Dy()))
 	draw.Draw(mode, bounds, firstImage, bounds.Min, draw.Src)
 
-	pixelTable := NewPixelDataTable(imageCount, bounds.Dx(), bounds.Dy())
+	pixelTable := NewMemoryDataTable(imageCount, bounds.Dx(), bounds.Dy())
 
 	// Store data from all images -- Danger: O(n^3)
 	imgCount := 0
@@ -125,18 +125,23 @@ type PixelData struct {
 	currentLength uint
 }
 
-type PixelDataTable struct {
+type PixelDataTable interface {
+	StoreData(x, y int, pointColor color.Color) error
+	GetData(x, y int) *PixelData
+}
+
+type MemoryDataTable struct {
 	length    int
 	dataTable map[image.Point]*PixelData
 }
 
-func NewPixelDataTable(imageCount, width, height int) *PixelDataTable {
-	table := &PixelDataTable{length: imageCount}
+func NewMemoryDataTable(imageCount, width, height int) *MemoryDataTable {
+	table := &MemoryDataTable{length: imageCount}
 	table.dataTable = make(map[image.Point]*PixelData)
 	return table
 }
 
-func (ds *PixelDataTable) StoreData(x, y int, pointColor color.Color) error {
+func (ds *MemoryDataTable) StoreData(x, y int, pointColor color.Color) error {
 	point := image.Pt(x, y)
 	pixelData := ds.dataTable[point]
 
@@ -154,7 +159,7 @@ func (ds *PixelDataTable) StoreData(x, y int, pointColor color.Color) error {
 	return nil
 }
 
-func (ds *PixelDataTable) GetData(x, y int) *PixelData {
+func (ds *MemoryDataTable) GetData(x, y int) *PixelData {
 	point := image.Pt(x, y)
 	return ds.dataTable[point]
 }
